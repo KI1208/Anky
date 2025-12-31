@@ -1,0 +1,19 @@
+{
+  "name": "flashcard-app",
+  "version": "1.0.0",
+  "description": "Flashcard learning application",
+  "main": "main.js",
+  "scripts": {
+    "test": "node test-flashcard-validation-node.js",
+    "test-validation": "node test-validation-service-node.js",
+    "test-validation-unit": "node test-validation-service-unit.js",
+    "test-all": "npm run test-validation && npm run test-validation-unit && npm run test",
+    "test-pbt": "node run-all-property-tests.js",
+    "test-pbt-verbose": "node run-all-property-tests.js --verbose",
+    "test-comprehensive": "npm run test-all && npm run test-pbt"
+  },
+  "dependencies": {
+    "fast-check": "^3.15.0"
+  },
+  "type": "commonjs"
+}

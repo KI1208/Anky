@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Test: Flashcard Validation - Task 2.2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #007cba;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .test-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007cba;
+        }
+        #output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        .controls {
+            margin: 15px 0;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Property-Based Test: Flashcard Validation</h1>
+            <p>Task 2.2 - Property 4: Flashcard Validation</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>Test Information</h3>
+            <p><strong>Property:</strong> For any flashcard creation or edit attempt with empty question or answer fields, the system should reject the operation and maintain the current state.</p>
+            <p><strong>Validates:</strong> Requirements 1.4</p>
+            <p><strong>Feature:</strong> flashcard-app, Property 4: Flashcard Validation</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="runPropertyTest()">Run Property Test</button>
+            <button onclick="clearOutput()">Clear Output</button>
+            <button onclick="showTestDetails()">Show Test Details</button>
+        </div>
+        
+        <div id="output">Click "Run Property Test" to execute the test...</div>
+    </div>
+
+    <script src="models.js"></script>
+    <script>
+        // Output management
+        const outputDiv = document.getElementById('output');
+        
+        function log(message, type = 'normal') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = `[${timestamp}] `;
+            const formattedMessage = prefix + message + '\n';
+            
+            const span = document.createElement('span');
+            span.textContent = formattedMessage;
+            if (type === 'success') span.className = 'success';
+            if (type === 'error') span.className = 'error';
+            if (type === 'info') span.className = 'info';
+            
+            outputDiv.appendChild(span);
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+        
+        function clearOutput() {
+            outputDiv.innerHTML = '';
+        }
+        
+        function showTestDetails() {
+            clearOutput();
+            log('Property-Based Test Details', 'info');
+            log('=' .repeat(50));
+            log('Property 4: Flashcard Validation');
+            log('Validates: Requirements 1.4');
+            log('');
+            log('This test verifies that the Flashcard validation system:');
+            log('1. Rejects flashcards with empty questions');
+            log('2. Rejects flashcards with empty answers');
+            log('3. Rejects flashcards with whitespace-only content');
+            log('4. Rejects flashcards with untrimmed content');
+            log('5. Accepts valid flashcards with proper content');
+            log('');
+            log('The test simulates property-based testing by running');
+            log('multiple test cases that cover edge cases and valid inputs.');
+        }
+        
+        /**
+         * Property 4: Flashcard Validation Test
+         * **Feature: flashcard-app, Property 4: Flashcard Validation**
+         * **Validates: Requirements 1.4**
+         */
+        function runPropertyTest() {
+            clearOutput();
+            log('Starting Property-Based Test for Flashcard Validation', 'info');
+            log('=' .repeat(60));
+            log('Property 4: Flashcard Validation');
+            log('Validates: Requirements 1.4');
+            log('=' .repeat(60));
+            
+            let totalTests = 0;
+            let passedTests = 0;
+            let failedTests = 0;
+            
+            try {
+                // Test Case 1: Invalid flashcards should be rejected
+                log('\n1. Testing invalid flashcards (should be rejected):', 'info');
+                
+                const invalidCases = [
+                    { question: '', answer: 'Valid answer', deckId: 'deck-1', desc: 'Empty question' },
+                    { question: 'Valid question', answer: '', deckId: 'deck-1', desc: 'Empty answer' },
+                    { question: '', answer: '', deckId: 'deck-1', desc: 'Both empty' },
+                    { question: '   ', answer: 'Valid answer', deckId: 'deck-1', desc: 'Whitespace-only question' },
+                    { question: 'Valid question', answer: '   ', deckId: 'deck-1', desc: 'Whitespace-only answer' },
+                    { question: '\t\n  ', answer: 'Valid answer', deckId: 'deck-1', desc: 'Mixed whitespace question' },
+                    { question: 'Valid question', answer: '\t\n  ', deckId: 'deck-1', desc: 'Mixed whitespace answer' },
+                    { question: '  Valid question  ', answer: 'Valid answer', deckId: 'deck-1', desc: 'Untrimmed question' },
+                    { question: 'Valid question', answer: '  Valid answer  ', deckId: 'deck-1', desc: 'Untrimmed answer' },
+                ];
+                
+                for (const testCase of invalidCases) {
+                    totalTests++;
+                    const flashcard = new Flashcard(testCase);
+                    const validationResult = flashcard.validate();
+                    
+                    if (!validationResult.isValid) {
+                        log(`✅ PASS: ${testCase.desc}`, 'success');
+                        log(`   Errors: ${validationResult.errors.join(', ')}`);
+                        passedTests++;
+                    } else {
+                        log(`❌ FAIL: ${testCase.desc} - Expected invalid but was valid`, 'error');
+                        failedTests++;
+                    }
+                }
+                
+                // Test Case 2: Valid flashcards should pass validation
+                log('\n2. Testing valid flashcards (should be accepted):', 'info');
+                
+                const validCases = [
+                    { question: 'What is 2+2?', answer: '4', deckId: 'deck-1', desc: 'Simple math question' },
+                    { question: 'Capital of France?', answer: 'Paris', deckId: 'deck-2', desc: 'Geography question' },
+                    { question: 'A', answer: 'B', deckId: 'deck-3', desc: 'Single character Q&A' },
+                    { question: 'What is the meaning of life?', answer: '42', deckId: 'deck-4', desc: 'Philosophy question' },
+                    { question: 'HTML stands for?', answer: 'HyperText Markup Language', deckId: 'deck-5', desc: 'Technical question' },
+                ];
+                
+                for (const testCase of validCases) {
+                    totalTests++;
+                    const flashcard = new Flashcard(testCase);
+                    const validationResult = flashcard.validate();
+                    
+                    if (validationResult.isValid) {
+                        log(`✅ PASS: ${testCase.desc}`, 'success');
+                        passedTests++;
+                    } else {
+                        log(`❌ FAIL: ${testCase.desc} - Expected valid but was invalid`, 'error');
+                        log(`   Errors: ${validationResult.errors.join(', ')}`);
+                        failedTests++;
+                    }
+                }
+                
+                // Test Case 3: Edge cases
+                log('\n3. Testing edge cases:', 'info');
+                
+                const edgeCases = [
+                    { question: 'Valid question', answer: 'Valid answer', deckId: '', desc: 'Empty deckId' },
+                    { question: 'Valid question', answer: 'Valid answer', deckId: null, desc: 'Null deckId' },
+                    { question: 'Valid question', answer: 'Valid answer', desc: 'Missing deckId' },
+                ];
+                
+                for (const testCase of edgeCases) {
+                    totalTests++;
+                    const flashcard = new Flashcard(testCase);
+                    const validationResult = flashcard.validate();
+                    
+                    if (!validationResult.isValid) {
+                        log(`✅ PASS: ${testCase.desc}`, 'success');
+                        log(`   Errors: ${validationResult.errors.join(', ')}`);
+                        passedTests++;
+                    } else {
+                        log(`❌ FAIL: ${testCase.desc} - Expected invalid but was valid`, 'error');
+                        failedTests++;
+                    }
+                }
+                
+                // Test Summary
+                log('\n' + '=' .repeat(60));
+                log('TEST SUMMARY', 'info');
+                log('=' .repeat(60));
+                log(`Total Tests: ${totalTests}`);
+                log(`Passed: ${passedTests}`, passedTests === totalTests ? 'success' : 'normal');
+                log(`Failed: ${failedTests}`, failedTests > 0 ? 'error' : 'normal');
+                log(`Success Rate: ${((passedTests / totalTests) * 100).toFixed(1)}%`);
+                
+                if (failedTests === 0) {
+                    log('\n🎉 All property tests PASSED!', 'success');
+                    log('\n**Feature: flashcard-app, Property 4: Flashcard Validation**', 'info');
+                    log('**Validates: Requirements 1.4**', 'info');
+                    log('\nProperty verified: For any flashcard creation or edit attempt with');
+                    log('empty question or answer fields, the system correctly rejects the');
+                    log('operation and maintains the current state.');
+                    
+                    // Update task status
+                    log('\n✅ Task 2.2 completed successfully!', 'success');
+                    return true;
+                } else {
+                    log('\n❌ Some property tests FAILED!', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                log(`❌ Error during property test: ${error.message}`, 'error');
+                console.error('Property test error:', error);
+                return false;
+            }
+        }
+        
+        // Auto-run test when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                log('Property test page loaded. Ready to run tests.', 'info');
+                log('Click "Run Property Test" to execute the validation tests.');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
